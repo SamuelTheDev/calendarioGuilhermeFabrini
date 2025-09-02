@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendário Temático: Gladiadores (2025–2026)</title>
+  <style>
+    :root{
+      --bg:#0e0d0b;          /* arena escura */
+      --card:#1a1714;
+      --ink:#f2e7c9;         /* papiro */
+      --accent:#c49b3a;      /* dourado */
+      --accent-2:#8b2e2e;    /* vermelho gládio */
+      --muted:#bfb7a4;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      background:radial-gradient(1000px 600px at 50% -10%, #2a241d 0%, var(--bg) 60%);
+      color:var(--ink); line-height:1.35; padding:24px;
+    }
+    header{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:16px;
+    }
+    .title{
+      font-size:clamp(24px, 3.6vw, 48px); letter-spacing:1px; font-weight:800;
+      display:flex; align-items:center; gap:12px;
+    }
+    .title .icon{filter: drop-shadow(0 2px 0 rgba(0,0,0,.3));}
+    .toolbar{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none; border:1px solid var(--accent); color:var(--ink); background:linear-gradient(180deg, #2b2620, #161411);
+      padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; letter-spacing:.2px;
+      box-shadow: 0 0 0 1px #000 inset, 0 6px 18px rgba(0,0,0,.25);
+    }
+    button:hover{filter:brightness(1.08)}
+    button:active{transform:translateY(1px)}
+
+    main{display:grid; gap:28px}
+    .year{
+      border:1px solid rgba(196,155,58,.6); border-radius:20px; padding:18px; background:linear-gradient(180deg, rgba(27,24,20,.8), rgba(20,18,15,.9));
+      box-shadow: 0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .year-header{
+      display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;
+    }
+    .year-title{font-size:clamp(20px, 2.7vw, 34px); font-weight:900; letter-spacing:.6px}
+    .motto{opacity:.9; font-style:italic; color:var(--muted)}
+
+    .months{display:grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap:16px}
+    @media (max-width: 1100px){ .months{grid-template-columns: repeat(3, minmax(220px, 1fr));} }
+    @media (max-width: 820px){ .months{grid-template-columns: repeat(2, minmax(220px, 1fr));} }
+    @media (max-width: 520px){ .months{grid-template-columns: 1fr; } }
+
+    .month{
+      background:var(--card); border-radius:16px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.05); position:relative;
+    }
+    .month::before{ /* faixa decorativa tipo escudo */
+      content:""; position:absolute; inset:auto 0 0 0; height:6px; background:linear-gradient(90deg, var(--accent-2), var(--accent));
+    }
+    .month-head{
+      display:flex; align-items:center; justify-content:space-between; padding:10px 12px 4px 12px; border-bottom:1px dashed rgba(255,255,255,.08);
+    }
+    .month-name{font-weight:800; letter-spacing:.4px}
+    .glyph{opacity:.9; font-size:18px}
+
+    .weekdays, .days{display:grid; grid-template-columns: repeat(7, 1fr);}
+    .weekdays{padding:6px 10px; gap:6px}
+    .weekday{font-size:11px; text-align:center; color:var(--muted); font-weight:700}
+    .days{gap:6px; padding:0 10px 12px 10px}
+    .day{
+      aspect-ratio: 1 / 1; border:1px solid rgba(255,255,255,.06); border-radius:10px; display:flex; align-items:center; justify-content:center;
+      font-weight:700; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.06));
+    }
+    .is-today{outline:2px solid var(--accent); box-shadow:0 0 0 4px rgba(196,155,58,.25);}
+    .is-weekend{opacity:.85}
+    .is-empty{visibility:hidden}
+
+    .legend{display:flex; gap:14px; align-items:center; margin-top:8px; color:var(--muted); font-size:13px}
+    .legend .dot{width:10px; height:10px; border-radius:3px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.06); display:inline-block; margin-right:6px}
+    .legend .today{outline:2px solid var(--accent); box-shadow:0 0 0 3px rgba(196,155,58,.25);}
+
+    footer{margin-top:12px; text-align:center; color:var(--muted); font-size:13px}
+
+    /* Impressão */
+    @media print{
+      body{background:#fff; color:#000; padding:0}
+      header, .legend, .motto, .month::before{display:none !important}
+      .year{box-shadow:none; border:none; page-break-after:always}
+      .month{border:1px solid #000}
+      .day{background:#fff; border:1px solid #000; color:#000}
+      .weekdays .weekday{color:#000}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <span class="icon" aria-hidden>🛡️⚔️</span>
+      <span>Calendário dos Gladiadores</span>
+    </div>
+    <div class="toolbar">
+      <button id="btnImprimir" title="Imprimir ou salvar em PDF">Imprimir / PDF</button>
+      <button id="btnEscuro" title="Alternar tema">Alternar Tema</button>
+    </div>
+  </header>
+
+  <main id="root"></main>
+  <footer>Feito em HTML + CSS + JS. Imprima para PDF para compartilhar. "Fortes fortuna adiuvat."</footer>
+
+  <script>
+    // ==== Configurações ====
+    const glyphs = ["🏛️","⚔️","🛡️","🗡️","🦁","🏺","🏟️","🐎","🗡️","🦅","🔥","🏛️"]; // por mês
+    const mesesPT = [
+      "Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+    ];
+    const diasPT = ["D","S","T","Q","Q","S","S"]; // abreviações PT-BR
+
+    // Anos alvo: este ano e próximo
+    const anoAtual = new Date().getFullYear();
+    const anos = [anoAtual, anoAtual + 1];
+
+    // ==== Utilitários ====
+    function primeiroDiaMes(year, month){
+      return new Date(year, month, 1).getDay(); // 0 (domingo) .. 6 (sábado)
+    }
+    function diasNoMes(year, month){
+      return new Date(year, month + 1, 0).getDate();
+    }
+    function ehHoje(y,m,d){
+      const t = new Date();
+      return d && t.getFullYear()===y && t.getMonth()===m && t.getDate()===d;
+    }
+    function weekendIdx(idx){ return idx === 0 || idx === 6; } // domingo/sábado
+
+    // ==== Render ====
+    function render(){
+      const root = document.getElementById('root');
+      root.innerHTML = '';
+      anos.forEach(ano => root.appendChild(renderAno(ano)));
+    }
+
+    function renderAno(ano){
+      const wrap = el('section', 'year');
+      const head = el('div', 'year-header');
+      const title = el('div', 'year-title');
+      title.textContent = `⚔️ Ano ${ano}`;
+      const motto = el('div', 'motto');
+      motto.textContent = frasesMotto(ano);
+      head.appendChild(title); head.appendChild(motto);
+      const monthsGrid = el('div', 'months');
+      for(let m=0;m<12;m++) monthsGrid.appendChild(renderMes(ano,m));
+      wrap.appendChild(head); wrap.appendChild(monthsGrid);
+      wrap.appendChild(renderLegenda());
+      return wrap;
+    }
+
+    function renderMes(ano, mes){
+      const card = el('article', 'month');
+      const head = el('div', 'month-head');
+      const name = el('div', 'month-name');
+      name.textContent = mesesPT[mes];
+      const g = el('div', 'glyph'); g.textContent = glyphs[mes] || '⚔️';
+      head.appendChild(name); head.appendChild(g);
+
+      const weekdays = el('div','weekdays');
+      diasPT.forEach(d => weekdays.appendChild(el('div','weekday', d)));
+
+      const days = el('div','days');
+      const offset = primeiroDiaMes(ano, mes);
+      const total = diasNoMes(ano, mes);
+      const totalCells = Math.ceil((offset + total) / 7) * 7;
+
+      for(let i=0;i<totalCells;i++){
+        const dayCell = el('div','day');
+        const dayNum = i - offset + 1;
+        if(dayNum < 1 || dayNum > total){
+          dayCell.classList.add('is-empty');
+          dayCell.textContent = '.';
+        } else {
+          dayCell.textContent = dayNum;
+          const weekday = (i % 7);
+          if(weekendIdx(weekday)) dayCell.classList.add('is-weekend');
+          if(ehHoje(ano,mes,dayNum)) dayCell.classList.add('is-today');
+        }
+        days.appendChild(dayCell);
+      }
+
+      card.appendChild(head);
+      card.appendChild(weekdays);
+      card.appendChild(days);
+      return card;
+    }
+
+    function renderLegenda(){
+      const l = el('div','legend');
+      l.innerHTML = `
+        <span><span class="dot"></span>Dia normal</span>
+        <span><span class="dot today"></span>Hoje</span>
+        <span>Fins de semana ligeiramente destacados</span>
+      `;
+      return l;
+    }
+
+    function el(tag, cls, text){
+      const e = document.createElement(tag);
+      if(cls) e.className = cls;
+      if(text!==undefined) e.textContent = text;
+      return e;
+    }
+
+    function frasesMotto(ano){
+      const frases = [
+        'A arena não perdoa os indecisos.',
+        'Disciplina é o escudo do guerreiro.',
+        'Sangue, areia e glória.',
+        'Audentes fortuna iuvat.',
+        'Treine no silêncio, vença no rugido.',
+        'Forja o corpo, afia a mente.',
+      ];
+      return frases[ano % frases.length];
+    }
+
+    // Tema claro/escuro básico
+    function alternarTema(){
+      const light = {
+        '--bg':'#f7f4ea', '--card':'#ffffff', '--ink':'#1a1307', '--accent':'#a37912', '--accent-2':'#b33b3b', '--muted':'#574f3f'
+      };
+      const dark = {
+        '--bg':'#0e0d0b', '--card':'#1a1714', '--ink':'#f2e7c9', '--accent':'#c49b3a', '--accent-2':'#8b2e2e', '--muted':'#bfb7a4'
+      };
+      const currentBg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      const scheme = currentBg === '#0e0d0b' ? light : dark;
+      for(const k in scheme) document.documentElement.style.setProperty(k, scheme[k]);
+    }
+
+    // Botões
+    document.getElementById('btnImprimir').addEventListener('click', ()=>window.print());
+    document.getElementById('btnEscuro').addEventListener('click', alternarTema);
+
+    // Inicializa
+    render();
+  </script>
+</body>
+</html>
